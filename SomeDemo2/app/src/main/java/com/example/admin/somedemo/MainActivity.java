@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
-import android.media.MediaDataSource;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.preference.PreferenceManager;
@@ -32,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button btnGoOn;
     private EditText mEditText;
     private Button btnSeek;
+    private Button btnToVideo;
 
     private MediaPlayer mMediaPlayer;
 
@@ -54,10 +54,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnPause = findViewById(R.id.btn_pause);
         btnGoOn = findViewById(R.id.btn_restart);
         btnSeek = findViewById(R.id.btn_seek);
+        btnToVideo = findViewById(R.id.btn_to_video);
         btnStart.setOnClickListener(this);
         btnPause.setOnClickListener(this);
         btnGoOn.setOnClickListener(this);
         btnSeek.setOnClickListener(this);
+        btnToVideo.setOnClickListener(this);
         mEditText = findViewById(R.id.ed_file_path);
     }
 
@@ -141,6 +143,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (mMediaPlayer.isPlaying()) {
                     mMediaPlayer.seekTo(SEEK_BAR_TIME);
                 }
+                break;
+
+            case R.id.btn_to_video:
+                Intent i = new Intent(MainActivity.this, VideoActivity.class);
+                startActivity(i);
                 break;
 
             default:

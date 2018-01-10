@@ -43,5 +43,12 @@
         android:text="seek to"
         />
 
+    <Button
+        android:id="@+id/btn_to_video"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="To Play Video"
+        />
+
 
 </LinearLayout>
