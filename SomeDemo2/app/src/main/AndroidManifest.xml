@@ -37,6 +37,8 @@
         <activity android:name=".util.PermissionsActivity"/>
         <activity android:name=".VideoActivity">
         </activity>
+        <activity android:name=".mediamodule.Media2Activity">
+        </activity>
     </application>
 
 </manifest>

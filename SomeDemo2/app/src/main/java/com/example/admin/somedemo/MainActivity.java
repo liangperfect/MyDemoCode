@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.admin.somedemo.mediamodule.Media2Activity;
 import com.example.admin.somedemo.util.CameraSettings;
 import com.example.admin.somedemo.util.PermissionsActivity;
 
@@ -146,7 +147,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.btn_to_video:
-                Intent i = new Intent(MainActivity.this, VideoActivity.class);
+//                Intent i = new Intent(MainActivity.this, VideoActivity.class);
+                Intent i = new Intent(MainActivity.this, Media2Activity.class);
                 startActivity(i);
                 break;
 
