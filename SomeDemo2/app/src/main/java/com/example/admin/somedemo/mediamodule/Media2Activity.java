@@ -18,7 +18,6 @@ import com.example.admin.somedemo.R;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.file.attribute.FileAttribute;
 
 public class Media2Activity extends AppCompatActivity implements View.OnClickListener {
     private final String TAG = this.getClass().getName().toString();
@@ -69,16 +68,19 @@ public class Media2Activity extends AppCompatActivity implements View.OnClickLis
 //                Log.d(TAG, "format:" + format.getString(MediaFormat.KEY_MIME));
             }
 
-            MediaExtractor audioME = new MediaExtractor();
-            audioME.setDataSource("sdcard/gangqin.mp3");
-            int audioTrackIndex = -1;
-            for (int i = 0; i < audioME.getTrackCount(); i++) {
-                MediaFormat format = audioME.getTrackFormat(i);
-                if (format.getString(MediaFormat.KEY_MIME).startsWith("audio/")) ;
-                audioME.selectTrack(i);
-                audioTrackIndex = mMediaMuxer.addTrack(format);
-
-            }
+//            MediaExtractor audioME = new MediaExtractor();
+//            audioME.setDataSource("sdcard/gangqin.mp3");
+//            int audioTrackIndex = -1;
+//            Log.d(TAG,"audio getTrackCount"+audioME.getTrackCount());
+//            for (int i = 0; i < audioME.getTrackCount(); i++) {
+//                MediaFormat format = audioME.getTrackFormat(i);
+//                Log.d(TAG,"audio format"+format.toString());
+//                if (format.getString(MediaFormat.KEY_MIME).startsWith("audio/")) {
+//                    audioME.selectTrack(i);
+//                    audioTrackIndex = mMediaMuxer.addTrack(format);
+//                    break;
+//                }
+//            }
             //开始封装
             mMediaMuxer.start();
 
@@ -99,36 +101,31 @@ public class Media2Activity extends AppCompatActivity implements View.OnClickLis
                 }
             }
 
-
             // 封装音频track
-            if (-1 != audioTrackIndex) {
-                MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
-                info.presentationTimeUs = 0;
-                ByteBuffer buffer = ByteBuffer.allocate(100 * 1024);
-                while (true) {
-                    int sampleSize = audioME.readSampleData(buffer, 0);
-                    if (sampleSize < 0) {
-                        break;
-                    }
-
-                    info.offset = 0;
-                    info.size = sampleSize;
-                    info.flags = MediaCodec.BUFFER_FLAG_SYNC_FRAME;
-                    info.presentationTimeUs = audioME.getSampleTime();
-                    mMediaMuxer.writeSampleData(audioTrackIndex, buffer, info);
-
-                    audioME.advance();
-                }
-            }
+//            if (-1 != audioTrackIndex) {
+//                MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
+//                info.presentationTimeUs = 0;
+//                ByteBuffer buffer = ByteBuffer.allocate(100 * 1024);
+//                while (true) {
+//                    int sampleSize = audioME.readSampleData(buffer, 0);
+//                    if (sampleSize < 0) {
+//                        break;
+//                    }
+//                    info.offset = 0;
+//                    info.size = sampleSize;
+//                    info.flags = MediaCodec.BUFFER_FLAG_SYNC_FRAME;
+//                    info.presentationTimeUs = audioME.getSampleTime();
+//                    mMediaMuxer.writeSampleData(audioTrackIndex, buffer, info);
+//                    audioME.advance();
+//                }
+//            }
             videoME.release();
-            audioME.release();
+//            audioME.release();
             //释放MediaMu
             mMediaMuxer.stop();
             mMediaMuxer.release();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
 }
