@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.example.admin.somedemo.MediaTask.MediaTaskOneActivity;
 import com.example.admin.somedemo.mediamodule.Media2Activity;
+import com.example.admin.somedemo.mediamodule.Task2Activity;
 import com.example.admin.somedemo.util.CameraSettings;
 import com.example.admin.somedemo.util.PermissionsActivity;
 
@@ -149,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             case R.id.btn_to_video:
 //                Intent i = new Intent(MainActivity.this, VideoActivity.class);
-                Intent i = new Intent(MainActivity.this, MediaTaskOneActivity.class);
+                Intent i = new Intent(MainActivity.this, Task2Activity.class);
                 startActivity(i);
                 break;
 
@@ -165,14 +166,50 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onStop() {
-        super.onStop();
+       super.onStop();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mMediaPlayer.stop();
+//        mMediaPlayer.stop();
         mMediaPlayer.release();
         mMediaPlayer = null;
     }
 }
+
+/**
+* //播放文件
+ public void PlayRecord() {
+ if(file == null){
+ return;
+ }
+ //读取文件
+ int musicLength = (int) (file.length() / 2);
+ short[] music = new short[musicLength];
+ try {
+ InputStream is = new FileInputStream(file);
+ BufferedInputStream bis = new BufferedInputStream(is);
+ DataInputStream dis = new DataInputStream(bis);
+ int i = 0;
+ while (dis.available() > 0) {
+ music[i] = dis.readShort();
+ i++;
+ }
+ dis.close();
+ AudioTrack audioTrack = new AudioTrack(AudioManager.STREAM_MUSIC,
+ 16000, AudioFormat.CHANNEL_CONFIGURATION_MONO,
+ AudioFormat.ENCODING_PCM_16BIT,
+ musicLength * 2,
+ AudioTrack.MODE_STREAM);
+ audioTrack.play();
+ audioTrack.write(music, 0, musicLength);
+ audioTrack.stop();
+ } catch (Throwable t) {
+ Log.e(TAG, "播放失败");
+ }
+ }
+ *
+ *
+ *
+* */

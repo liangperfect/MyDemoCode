@@ -41,6 +41,8 @@
         </activity>
         <activity android:name=".MediaTask.MediaTaskOneActivity">
         </activity>
+        <activity android:name=".mediamodule.Task2Activity">
+        </activity>
     </application>
 
 </manifest>
