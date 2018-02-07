@@ -25,8 +25,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 
 public class Task2Activity extends AppCompatActivity implements View.OnClickListener {
 
@@ -36,17 +39,24 @@ public class Task2Activity extends AppCompatActivity implements View.OnClickList
     private File mPCMFile;
     private File mWavFile;
     private boolean isRun;
-
     private final int WAV_HEADER_SIZE = 44;
+    //采样率
+    int sampleRateInHZ = 16000;
+    //格式
+    int channelConfiguration = AudioFormat.CHANNEL_IN_MONO;
+    //16Bit
+    int audioEncoding = AudioFormat.ENCODING_PCM_16BIT;
+    //声道数
+    short channelCount = 1;
+    //pcm文件大小
+    int pcmSize = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task2);
-
         mAudioRecorderBtn = findViewById(R.id.btn_audiorecorder);
         mAudioTrackBtn = findViewById(R.id.btn_audiotrack);
-
         mAudioRecorderBtn.setOnClickListener(this);
         mAudioTrackBtn.setOnClickListener(this);
     }
@@ -59,8 +69,9 @@ public class Task2Activity extends AppCompatActivity implements View.OnClickList
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-//                        startAudioRecorder();
-                        //写入的头部信息
+                        //录制PCM格式
+//                       startAudioRecorder();
+//                      组装成wav文件
                         startAudioRecorderWave();
                     }
                 }).start();
@@ -112,17 +123,8 @@ public class Task2Activity extends AppCompatActivity implements View.OnClickList
 
     /*录制音频PCM*/
     private void startAudioRecorder() {
-        //采样率
-        int sampleRateInHZ = 16000;
-        //格式
-        int channelConfiguration = AudioFormat.CHANNEL_IN_MONO;
-        //16Bit
-        int audioEncoding = AudioFormat.ENCODING_PCM_16BIT;
         //创建PCM文件
         mPCMFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/ceshi.pcm");
-
-        Log.d(TAG, "PCM path:" + Environment.getExternalStorageDirectory().getAbsolutePath());
-
         if (mPCMFile.exists()) {
             mPCMFile.delete();
         }
@@ -141,7 +143,6 @@ public class Task2Activity extends AppCompatActivity implements View.OnClickList
             int bufferSize = AudioRecord.getMinBufferSize(sampleRateInHZ, channelConfiguration, audioEncoding);
             Log.d(TAG, "westalgo bufferSize :" + bufferSize);
             AudioRecord audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, sampleRateInHZ, channelConfiguration, audioEncoding, bufferSize);
-
             short[] buffer = new short[bufferSize];
             //开始录音，保存到audioRecorderh缓存去区当中
             audioRecord.startRecording();
@@ -160,20 +161,27 @@ public class Task2Activity extends AppCompatActivity implements View.OnClickList
         }
     }
 
+    /*先通过上面的startAudioRecorder方法来录制一个pcm文件，
+    *再利用startAudiRecorderWave方法生成一个wave的头部信息，
+    *后面将只之前保存的pcm文件拼接到这个头部后面，
+    * 就组装成了一个wav文件了
+    * */
     private void startAudioRecorderWave() {
-
-        //采样率
-        int sampleRateInHZ = 16000;
-        //格式
-        int channelConfiguration = AudioFormat.CHANNEL_IN_MONO;
-        //16Bit
-        int audioEncoding = AudioFormat.ENCODING_PCM_16BIT;
-        //声道数
-        short channelCount = 1;
-
+        //pcm data
+        byte[] mOrinPcm = new byte[0];
         //创建wav文件
         mWavFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/ceshi.wav");
-        Log.d(TAG, "wav fiel path:" + Environment.getExternalStorageDirectory().getAbsolutePath() + "/ceshi.wav");
+        try {
+            mOrinPcm = toByteArray3(Environment.getExternalStorageDirectory().getAbsolutePath() + "/ceshi.pcm");
+            Log.e(TAG, "westalgo mOrinPcm length: " + mOrinPcm.length);
+            if (mOrinPcm.length < 1) {
+                Log.e(TAG, "can not read pcm file ");
+                return;
+            }
+            pcmSize = mOrinPcm.length;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         if (mWavFile.exists()) {
             mWavFile.delete();
         }
@@ -184,30 +192,18 @@ public class Task2Activity extends AppCompatActivity implements View.OnClickList
             e.printStackTrace();
             Log.d(TAG, "error to create wav file");
         }
-
         try {
             OutputStream os = new FileOutputStream(mWavFile);
             BufferedOutputStream bos = new BufferedOutputStream(os);
             DataOutputStream dos = new DataOutputStream(bos);
             int bufferSize = AudioRecord.getMinBufferSize(sampleRateInHZ, channelConfiguration, audioEncoding);
             Log.d(TAG, "westalgo bufferSize:" + bufferSize);
-            AudioRecord audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, sampleRateInHZ, channelConfiguration, audioEncoding, bufferSize);
-            short[] buffer = new short[bufferSize];
             byte[] wavHeader = initWavHeader(channelCount, sampleRateInHZ,
                     (sampleRateInHZ * channelCount * (audioEncoding == AudioFormat.ENCODING_PCM_16BIT ? 2 : 1)),
                     (short) (channelCount * (audioEncoding == AudioFormat.ENCODING_PCM_16BIT ? 2 : 1)),
-                    (short) (audioEncoding == AudioFormat.ENCODING_PCM_16BIT ? 16 : 8));
+                    (short) (audioEncoding == AudioFormat.ENCODING_PCM_16BIT ? 16 : 8), pcmSize);
             dos.write(wavHeader);
-
-            audioRecord.startRecording();
-            isRun = true;
-            while (isRun) {
-                int bufferReadResult = audioRecord.read(buffer, 0, bufferSize);
-                for (int i = 0; i < bufferReadResult; i++) {
-                    dos.writeShort(buffer[i]);
-                }
-            }
-            audioRecord.stop();
+            dos.write(mOrinPcm);
             dos.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -233,11 +229,13 @@ public class Task2Activity extends AppCompatActivity implements View.OnClickList
     40	4	子块2大小	== 样本数 * 通道数 * 每个样本的位数 / 8
     44	*	数据	实际的语音数据
     */
-    private byte[] initWavHeader(short channelCount, int sampleRate, int params2, short byteRate, short param5) {
+    private byte[] initWavHeader(short channelCount, int sampleRate, int params2, short byteRate, short param5, int pcmSize) {
+        int chrunckSize = pcmSize * channelCount * 16 / 8;
+        int myChunkSize = chrunckSize + 36;
         ByteBuffer byteBuffer = ByteBuffer.allocate(WAV_HEADER_SIZE);
         byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
-        byteBuffer.putInt(0x46464952);
-        byteBuffer.putInt(0);
+        byteBuffer.putInt(0x46464952); //RIFF
+        byteBuffer.putInt(myChunkSize);
         byteBuffer.putInt(0x45564157);
         byteBuffer.putInt(0x20746d66);
         byteBuffer.putInt(16);
@@ -247,11 +245,35 @@ public class Task2Activity extends AppCompatActivity implements View.OnClickList
         byteBuffer.putInt(params2);
         byteBuffer.putShort(byteRate);
         byteBuffer.putShort(param5);
-        byteBuffer.putInt(0x61746164);
-        byteBuffer.putInt(0);
+        byteBuffer.putInt(0x61746164); //data
+        byteBuffer.putInt(pcmSize);
         if (byteBuffer != null) {
             return byteBuffer.array();
         }
         return null;
+    }
+
+    private byte[] toByteArray3(String filename) throws IOException {
+        FileChannel fc = null;
+        try {
+            fc = new RandomAccessFile(filename, "r").getChannel();
+            MappedByteBuffer byteBuffer = fc.map(FileChannel.MapMode.READ_ONLY, 0,
+                    fc.size()).load();
+            System.out.println(byteBuffer.isLoaded());
+            byte[] result = new byte[(int) fc.size()];
+            if (byteBuffer.remaining() > 0) {
+                byteBuffer.get(result, 0, byteBuffer.remaining());
+            }
+            return result;
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw e;
+        } finally {
+            try {
+                fc.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
