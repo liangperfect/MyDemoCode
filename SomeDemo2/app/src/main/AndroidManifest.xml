@@ -45,6 +45,8 @@
         </activity>
         <activity android:name=".mediamodule.Task3Activity">
         </activity>
+        <activity android:name=".mediamodule.Task4Activity">
+        </activity>
     </application>
 
 </manifest>

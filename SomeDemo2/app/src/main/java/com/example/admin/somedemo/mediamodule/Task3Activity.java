@@ -11,6 +11,8 @@ import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.StreamConfigurationMap;
+import android.media.Image;
+import android.media.ImageReader;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
@@ -24,6 +26,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.example.admin.somedemo.R;
+import com.example.admin.somedemo.util.CameraUtils;
 
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
@@ -32,6 +35,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -112,6 +116,7 @@ public class Task3Activity extends AppCompatActivity {
             @Override
             public void onPreviewFrame(byte[] data, Camera camera) {
                 //dump 第150帧的预览数据
+                /*
                 frameCount++;
                 if (frameCount == 150) {
                     try {
@@ -129,6 +134,7 @@ public class Task3Activity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 }
+                */
             }
         });
         //preview Callback medthod 2
@@ -197,12 +203,11 @@ public class Task3Activity extends AppCompatActivity {
                 }
             };
 
-            cameraManager.openCamera(currentCameraId,callback,null);
+            cameraManager.openCamera(currentCameraId, callback, null);
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
     }
-
 
     /*从SurfaceHolder中获取到surface再通过CameraCaptureSession将预览数据显示到surfaceview上面
     *其中涉及一个RequestBuilder将surface给加载了
@@ -212,12 +217,30 @@ public class Task3Activity extends AppCompatActivity {
     private void createCameraPreviewSession() {
         try {
             //创建需要发送是什么请求，mPreviewRequestBuilder是session请求的事件
-            mPreviewRequestBuilder =  mCurrentCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
+            mPreviewRequestBuilder = mCurrentCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
             Surface surface = mSurfaceHolder.getSurface();
+
+            ImageReader imageReader = ImageReader.newInstance(PREVIEW_WIDTH, PREVIEW_HEIGHT, ImageFormat.JPEG, 2);
+            imageReader.setOnImageAvailableListener(new ImageReader.OnImageAvailableListener() {
+                @Override
+                public void onImageAvailable(ImageReader reader) {
+                    Image img = reader.acquireNextImage();
+                    Log.d(TAG, "imageReader img");
+                    ByteBuffer byteBuffer = img.getPlanes()[0].getBuffer();
+                    int pixelStride = img.getPlanes()[0].getPixelStride();
+                    int rowStride = img.getPlanes()[0].getRowStride();
+                    Log.d(TAG, "pixelStride" + pixelStride + "rowStride" + rowStride);
+                    byte[] data = new byte[byteBuffer.remaining()];
+                    byteBuffer.put(data);
+                    CameraUtils.dumpYUVImage(data);
+                    img.close();
+                }
+            }, null);
             //将Camera和显示预览的surfaceview结合起来
             mPreviewRequestBuilder.addTarget(surface);
+            mPreviewRequestBuilder.addTarget(imageReader.getSurface());
             //前面两步将输出位置给设置好了 创建一个CameraCaptureSession来进行预览
-            mCurrentCameraDevice.createCaptureSession(Arrays.asList(surface), new CameraCaptureSession.StateCallback() {
+            mCurrentCameraDevice.createCaptureSession(Arrays.asList(surface,imageReader.getSurface()), new CameraCaptureSession.StateCallback() {
                 @Override
                 public void onConfigured(@NonNull CameraCaptureSession session) {
                     //若Camera关闭就为空
@@ -226,12 +249,12 @@ public class Task3Activity extends AppCompatActivity {
                     //显示预览
                     mCameraCaptureSession = session;
                     //时间参数设置 - 自动对焦
-                    mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE,CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
+                    mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
                     //相关事件设置好之后就可以生成请求了
                     mCaptureRequest = mPreviewRequestBuilder.build();
                     //发送预览请求，预览数据就会呈现在之前设置的surface里
                     try {
-                        mCameraCaptureSession.setRepeatingRequest(mCaptureRequest,null,null);
+                        mCameraCaptureSession.setRepeatingRequest(mCaptureRequest, null, null);
                     } catch (CameraAccessException e) {
                         e.printStackTrace();
                     }
@@ -241,7 +264,7 @@ public class Task3Activity extends AppCompatActivity {
                 public void onConfigureFailed(@NonNull CameraCaptureSession session) {
 
                 }
-            },null);
+            }, null);
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
