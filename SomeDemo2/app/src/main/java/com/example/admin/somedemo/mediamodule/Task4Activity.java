@@ -1,6 +1,7 @@
 package com.example.admin.somedemo.mediamodule;
 
 import android.annotation.TargetApi;
+import android.graphics.ImageFormat;
 import android.media.MediaCodec;
 import android.media.MediaExtractor;
 import android.media.MediaFormat;
@@ -29,6 +30,7 @@ public class Task4Activity extends AppCompatActivity {
     private final String INPUT_FILE_PATH = SDCARD_PATH + "/task4.mp4";
     private final String OUT_VIDEO_PATH = SDCARD_PATH + "/video.mp4";
     private final String OUT_AUDIO_PATH = SDCARD_PATH + "/audio.mp4";
+    private final String OUT_MUXER_PATH = SDCARD_PATH + "/muxer.mp4";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +52,21 @@ public class Task4Activity extends AppCompatActivity {
                     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
                     @Override
                     public void run() {
+                        //从音视频中将音频分离出来
                         trackExtractor(INPUT_FILE_PATH, OUT_AUDIO_PATH, false);
+                    }
+                }).start();
+            }
+        });
+        Button muxerBtn = findViewById(R.id.btn_muxer);
+        muxerBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Thread(new Runnable() {
+                    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+                    @Override
+                    public void run() {
+                        trackMuxer(OUT_VIDEO_PATH, OUT_AUDIO_PATH, OUT_MUXER_PATH);
                     }
                 }).start();
             }
@@ -167,6 +183,125 @@ public class Task4Activity extends AppCompatActivity {
         mediaExtractor.release();
         muxer.stop();
         muxer.release();
+    }
+
+
+    /***
+     * 合并音频和视频
+     * @param videoPath 需要被合并的视频
+     * @param audioPath 需要被合并的音频
+     * @param outPath 输出合并的音视频
+     */
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    public void trackMuxer(String videoPath, String audioPath, String outPath) {
+
+        File mp4File = new File(videoPath);
+        if (mp4File.exists()) {
+            Log.d(TAG, "mp4File exit");
+        } else {
+            Log.d(TAG, "mp4File not exit");
+        }
+
+
+        //视频部分
+        MediaExtractor videoExtractor = new MediaExtractor();
+        try {
+            videoExtractor.setDataSource(videoPath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        MediaFormat videoMediaFormat = null;
+        int videoTrack = -1;
+        int videoTrackCount = -1;
+        videoTrackCount = videoExtractor.getTrackCount();
+        //找寻视频中的视频轨道
+        for (int i = 0; i < videoTrackCount; i++) {
+            videoMediaFormat = videoExtractor.getTrackFormat(i);
+            String mime = videoMediaFormat.getString(MediaFormat.KEY_MIME);
+            Log.d(TAG, "mime:" + mime);
+            if (mime.startsWith("video/")) {
+                videoTrack = i;
+                break;
+            }
+        }
+
+        //音频部分
+        MediaExtractor audioExtractor = new MediaExtractor();
+        try {
+            audioExtractor.setDataSource(audioPath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        MediaFormat audioMediaFormat = null;
+        int audioTrack = -1;
+        int audioTrackCount = audioExtractor.getTrackCount();
+        for (int j = 0; j < audioTrackCount; j++) {
+            audioMediaFormat = audioExtractor.getTrackFormat(j);
+            String mime = audioMediaFormat.getString(MediaFormat.KEY_MIME);
+            if (mime.startsWith("audio/")) {
+                audioTrack = j;
+                break;
+            }
+        }
+        Log.d(TAG, "videoTrack:" + videoTrack + "  audioTrack:" + audioTrack);
+        videoExtractor.selectTrack(videoTrack);
+        audioExtractor.selectTrack(audioTrack);
+
+        MediaCodec.BufferInfo videoBufferInfo = new MediaCodec.BufferInfo();
+        MediaCodec.BufferInfo audioBufferInfo = new MediaCodec.BufferInfo();
+
+        //准备工作完成后可以开始合并音视频
+        MediaMuxer muxer = null;
+        try {
+            muxer = new MediaMuxer(outPath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //添加muxer需要包含的数据轨道格式
+        int videoTrackIndex =  muxer.addTrack(videoMediaFormat);
+        int audioTrackIndex =  muxer.addTrack(audioMediaFormat);
+        muxer.start();
+
+        //视频帧循环添加
+        ByteBuffer videoByteBuffer = ByteBuffer.allocate(1024 * 1000);
+        Integer frameRate = videoMediaFormat.getInteger(MediaFormat.KEY_FRAME_RATE);
+        //获取帧间隔
+        long videoSampleTime = getSampleTime(videoExtractor, videoByteBuffer, frameRate, true);
+        while (true) {
+            int readSampleSize = videoExtractor.readSampleData(videoByteBuffer, 0);
+            if (readSampleSize < 0) {
+                break;
+            }
+            //记录每一帧大小
+            videoBufferInfo.size = readSampleSize;
+            videoBufferInfo.flags = videoExtractor.getSampleFlags();
+            videoBufferInfo.offset = 0;
+            videoBufferInfo.presentationTimeUs += videoSampleTime;
+            muxer.writeSampleData(videoTrackIndex, videoByteBuffer, videoBufferInfo);
+            videoExtractor.advance();
+        }
+
+        ByteBuffer audioByteByffer = ByteBuffer.allocate(1024 * 1000);
+        long audioSampleTime = getSampleTime(audioExtractor, audioByteByffer, 0, false);
+        //音频帧循环添加
+        while (true) {
+            int audioSampleSize = audioExtractor.readSampleData(audioByteByffer, 0);
+            if (audioSampleSize < 0) {
+                break;
+            }
+            audioBufferInfo.size = audioSampleSize;
+            audioBufferInfo.flags = audioExtractor.getSampleFlags();
+            audioBufferInfo.offset = 0;
+            videoBufferInfo.presentationTimeUs += audioSampleTime;
+            muxer.writeSampleData(audioTrackIndex, audioByteByffer, audioBufferInfo);
+            audioExtractor.advance();
+        }
+        muxer.stop();
+        muxer.release();
+        videoExtractor.release();
+        audioExtractor.release();
     }
 
     /***
