@@ -4,6 +4,9 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.ImageFormat;
+import android.graphics.Rect;
+import android.graphics.YuvImage;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Build;
@@ -22,9 +25,12 @@ import com.example.admin.somedemo.mediamodule.Media2Activity;
 import com.example.admin.somedemo.mediamodule.Task2Activity;
 import com.example.admin.somedemo.mediamodule.Task3Activity;
 import com.example.admin.somedemo.mediamodule.Task4Activity;
+import com.example.admin.somedemo.mediamodule.Task5Activity;
 import com.example.admin.somedemo.util.CameraSettings;
+import com.example.admin.somedemo.util.CameraUtils;
 import com.example.admin.somedemo.util.PermissionsActivity;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -37,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private EditText mEditText;
     private Button btnSeek;
     private Button btnToVideo;
+    private Button btnYuv2Jpeg;
 
     private MediaPlayer mMediaPlayer;
 
@@ -60,11 +67,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnGoOn = findViewById(R.id.btn_restart);
         btnSeek = findViewById(R.id.btn_seek);
         btnToVideo = findViewById(R.id.btn_to_video);
+        btnYuv2Jpeg = findViewById(R.id.btn_yuv2jpg);
         btnStart.setOnClickListener(this);
         btnPause.setOnClickListener(this);
         btnGoOn.setOnClickListener(this);
         btnSeek.setOnClickListener(this);
         btnToVideo.setOnClickListener(this);
+        btnYuv2Jpeg.setOnClickListener(this);
         mEditText = findViewById(R.id.ed_file_path);
     }
 
@@ -152,10 +161,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             case R.id.btn_to_video:
 //                Intent i = new Intent(MainActivity.this, VideoActivity.class);
-                Intent i = new Intent(MainActivity.this, Task4Activity.class);
+                Intent i = new Intent(MainActivity.this, Task5Activity.class);
                 startActivity(i);
                 break;
+            case R.id.btn_yuv2jpg:
+                byte[] data = CameraUtils.getBytes("sdcard/pic.yuv");
+                Log.d(TAG, "data.size:" + data.length);
+                YuvImage yuvImage = new YuvImage(data, ImageFormat.NV21, 1280, 960, null);
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                yuvImage.compressToJpeg(new Rect(0, 0, 1280, 960), 80, stream);
+                byte[] dataJepg = stream.toByteArray();
+                CameraUtils.dumpYUVImage(dataJepg, "jpeg");
 
+                break;
             default:
                 break;
         }
@@ -168,7 +186,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onStop() {
-       super.onStop();
+        super.onStop();
     }
 
     @Override
@@ -181,37 +199,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 }
 
 /**
-* //播放文件
- public void PlayRecord() {
- if(file == null){
- return;
- }
- //读取文件
- int musicLength = (int) (file.length() / 2);
- short[] music = new short[musicLength];
- try {
- InputStream is = new FileInputStream(file);
- BufferedInputStream bis = new BufferedInputStream(is);
- DataInputStream dis = new DataInputStream(bis);
- int i = 0;
- while (dis.available() > 0) {
- music[i] = dis.readShort();
- i++;
- }
- dis.close();
- AudioTrack audioTrack = new AudioTrack(AudioManager.STREAM_MUSIC,
- 16000, AudioFormat.CHANNEL_CONFIGURATION_MONO,
- AudioFormat.ENCODING_PCM_16BIT,
- musicLength * 2,
- AudioTrack.MODE_STREAM);
- audioTrack.play();
- audioTrack.write(music, 0, musicLength);
- audioTrack.stop();
- } catch (Throwable t) {
- Log.e(TAG, "播放失败");
- }
- }
- *
- *
- *
-* */
+ * //播放文件
+ * public void PlayRecord() {
+ * if(file == null){
+ * return;
+ * }
+ * //读取文件
+ * int musicLength = (int) (file.length() / 2);
+ * short[] music = new short[musicLength];
+ * try {
+ * InputStream is = new FileInputStream(file);
+ * BufferedInputStream bis = new BufferedInputStream(is);
+ * DataInputStream dis = new DataInputStream(bis);
+ * int i = 0;
+ * while (dis.available() > 0) {
+ * music[i] = dis.readShort();
+ * i++;
+ * }
+ * dis.close();
+ * AudioTrack audioTrack = new AudioTrack(AudioManager.STREAM_MUSIC,
+ * 16000, AudioFormat.CHANNEL_CONFIGURATION_MONO,
+ * AudioFormat.ENCODING_PCM_16BIT,
+ * musicLength * 2,
+ * AudioTrack.MODE_STREAM);
+ * audioTrack.play();
+ * audioTrack.write(music, 0, musicLength);
+ * audioTrack.stop();
+ * } catch (Throwable t) {
+ * Log.e(TAG, "播放失败");
+ * }
+ * }
+ */

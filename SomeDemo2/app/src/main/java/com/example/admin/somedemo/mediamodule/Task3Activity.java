@@ -115,6 +115,14 @@ public class Task3Activity extends AppCompatActivity {
         mCamera.setPreviewCallback(new Camera.PreviewCallback() {
             @Override
             public void onPreviewFrame(byte[] data, Camera camera) {
+
+//                ByteBuffer byteBuffer = ByteBuffer.allocate(data.length);
+//                byteBuffer.put(data);
+//                int depthSize = 1040 * 780 * 4 + 256;
+//                byte[] depthData = new byte[depthSize];
+//                byte[] mainImageData = new byte[];
+//                System.arraycopy(data, 0, depthData, 0, depthSize);
+
                 //dump 第150帧的预览数据
                 /*
                 frameCount++;
@@ -232,7 +240,7 @@ public class Task3Activity extends AppCompatActivity {
                     Log.d(TAG, "pixelStride" + pixelStride + "rowStride" + rowStride);
                     byte[] data = new byte[byteBuffer.remaining()];
                     byteBuffer.put(data);
-                    CameraUtils.dumpYUVImage(data);
+                    CameraUtils.dumpYUVImage(data, "yuv");
                     img.close();
                 }
             }, null);
@@ -240,7 +248,7 @@ public class Task3Activity extends AppCompatActivity {
             mPreviewRequestBuilder.addTarget(surface);
             mPreviewRequestBuilder.addTarget(imageReader.getSurface());
             //前面两步将输出位置给设置好了 创建一个CameraCaptureSession来进行预览
-            mCurrentCameraDevice.createCaptureSession(Arrays.asList(surface,imageReader.getSurface()), new CameraCaptureSession.StateCallback() {
+            mCurrentCameraDevice.createCaptureSession(Arrays.asList(surface, imageReader.getSurface()), new CameraCaptureSession.StateCallback() {
                 @Override
                 public void onConfigured(@NonNull CameraCaptureSession session) {
                     //若Camera关闭就为空
