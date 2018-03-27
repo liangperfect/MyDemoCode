@@ -78,7 +78,7 @@ public class Triangle {
         //基于顶点着色器与片元着色器创建程序
         mProgram = ShaderUtil.createProgram(mVertexShader, mFragmentShader);
         //获取程序中顶点位置属性引用id
-        maPositionHandle = GLES20.glGetAttribLocation(mProgram, "aPosition");
+        maPositionHandle = GLES20.glGetAttribLocation(mProgram, "aPostion");
         //获取程序中顶点颜色属性引用id
         maColorHandle = GLES20.glGetAttribLocation(mProgram, "aColor");
         //获取程序中总变换矩阵引用id
@@ -92,14 +92,6 @@ public class Triangle {
         GLES20.glUseProgram(mProgram);
         //初始化变换矩阵
         Matrix.setRotateM(mMMatrix, 0, 0, 0, 1, 0);
-        i = 1;
-        if (i == 1) {
-            for (int j = 0; j < mMMatrix.length; j++) {
-                Log.i("liang.chen", "item" + j + " is:" + mMMatrix[j]);
-            }
-
-        }
-        i++;
 
         //设置沿Z轴正向位移1
         Matrix.translateM(mMMatrix, 0, 0, 0, -1);
