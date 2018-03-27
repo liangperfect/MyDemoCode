@@ -26,6 +26,7 @@ import com.example.admin.somedemo.mediamodule.Task2Activity;
 import com.example.admin.somedemo.mediamodule.Task3Activity;
 import com.example.admin.somedemo.mediamodule.Task4Activity;
 import com.example.admin.somedemo.mediamodule.Task5Activity;
+import com.example.admin.somedemo.mediamodule.Task6Activity;
 import com.example.admin.somedemo.util.CameraSettings;
 import com.example.admin.somedemo.util.CameraUtils;
 import com.example.admin.somedemo.util.PermissionsActivity;
@@ -161,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             case R.id.btn_to_video:
 //                Intent i = new Intent(MainActivity.this, VideoActivity.class);
-                Intent i = new Intent(MainActivity.this, Task5Activity.class);
+                Intent i = new Intent(MainActivity.this, Task6Activity.class);
                 startActivity(i);
                 break;
             case R.id.btn_yuv2jpg:

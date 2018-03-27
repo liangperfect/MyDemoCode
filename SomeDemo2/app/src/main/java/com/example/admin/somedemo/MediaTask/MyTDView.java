@@ -5,6 +5,7 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.util.AttributeSet;
+import android.util.Log;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -55,6 +56,7 @@ public class MyTDView extends GLSurfaceView {
             tle.drawSelf();
         }
     }
+
     public class RotateThread extends Thread {
         public boolean flag = true;
 
