@@ -12,6 +12,7 @@ import android.util.Log;
 import android.widget.Gallery;
 
 import com.example.admin.somedemo.R;
+import com.example.admin.somedemo.util.MatrixState;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,7 +51,13 @@ public class MyGlPicView extends GLSurfaceView {
 
         @Override
         public void onSurfaceChanged(GL10 gl, int width, int height) {
-
+            GLES20.glViewport(0, 0, width, height);
+            //计算GLSurfaceView的宽高比
+            float ratio = (float) width / height;
+            //调用此方法计算产生透视投影矩阵
+            MatrixState.setProject(-ratio, ratio, -1, 1, 1, 10);
+            //调用此方法产生摄像机9参数位置矩阵
+            MatrixState.setCamera(0,0,3,0f,0f,0f,0f,1.0f,0.0f);
         }
 
         @Override

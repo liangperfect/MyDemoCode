@@ -11,9 +11,9 @@
 	issue1：将音频和视频合成mp4文件时候，音频播放不出来，后续调查
 
 
-    5. 学习 Android 平台 OpenGL ES API，了解 OpenGL 开发的基本流程，使用 OpenGL 绘制一个三角形
+    5. 学习 Android 平台 OpenGL ES API，了解 OpenGL 开发的基本流程，使用 OpenGL 绘制一个三角形[done]
 
-    6. 学习 Android 平台 OpenGL ES API，学习纹理绘制，能够使用 OpenGL 显示一张图片
+    6. 学习 Android 平台 OpenGL ES API，学习纹理绘制，能够使用 OpenGL 显示一张图片[done]
 
     7. 学习 MediaCodec API，完成音频 AAC 硬编、硬解
 
