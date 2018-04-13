@@ -162,7 +162,6 @@ public class Task3Activity extends AppCompatActivity {
         });
         * */
     }
-
     @SuppressLint("MissingPermission")
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void cameraAPI2(Context context) {
