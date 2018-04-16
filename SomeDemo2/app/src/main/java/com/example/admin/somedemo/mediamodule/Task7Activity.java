@@ -2,6 +2,7 @@ package com.example.admin.somedemo.mediamodule;
 
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
+import android.media.MediaExtractor;
 import android.media.MediaFormat;
 import android.os.Build;
 import android.os.Environment;
@@ -20,11 +21,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.util.IllegalFormatCodePointException;
 
 public class Task7Activity extends AppCompatActivity {
     final String TAG = "Task7Activity";
+    /*pcm编码成aac*/
     MediaCodec mAudioCodec;
     OutputStream outputStream;
+    /*aac解码成pcm*/
+    MediaCodec mAudioDecode;
+    MediaExtractor mAudioExtractor;
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
@@ -37,14 +43,14 @@ public class Task7Activity extends AppCompatActivity {
     /**
      * 将pcm编码成能播放的aac
      * MediaCodec简单的使用步骤
-     *
-     *1.初始化MediaCodec，给其设置好MediaForamt（包含媒体信息的参数）
-     *2.从MediaCodec中获取输入和输出的缓冲队列，输入队列存放了需要进行编码或者解码的媒体文件，
+     * <p>
+     * 1.初始化MediaCodec，给其设置好MediaFormat（包含媒体信息的参数）
+     * 2.从MediaCodec中获取输入和输出的缓冲队列，输入队列存放了需要进行编码或者解码的媒体文件，
      * 缓冲队列存放了是已经被编码或解码后的媒体文件
-     *3.从输入队列里面获取到输入的ByteBuffer，然后给buffer填充需要编码或者解码的数据
-     *4.进行编码或者解码
-     *5.从输出缓冲队列里面获取到输出的ByteBuffer,里面包含的数据已经是编码或者解码后的数据
-     *6.关闭相关流和清空buffer
+     * 3.从输入队列里面获取到输入的ByteBuffer，然后给buffer填充需要编码或解码的数据
+     * 4.进行编码或者解码
+     * 5.从输出缓冲队列里面获取到输出的ByteBuffer,里面包含的数据已经是编码或者解码后的数据
+     * 6.关闭相关流和清空buffer
      */
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public boolean codePcmToAAC(byte[] inputPcmData) {
@@ -124,7 +130,7 @@ public class Task7Activity extends AppCompatActivity {
         //释放相关资源
         try {
             outputStream.close();
-            if (mAudioCodec !=null){
+            if (mAudioCodec != null) {
                 mAudioCodec.stop();
                 mAudioCodec.release();
             }
@@ -133,6 +139,86 @@ public class Task7Activity extends AppCompatActivity {
         }
         return r;
     }
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    public boolean decodeAACToPcm(byte[] aacData) {
+        boolean r = false;
+
+        //aac文件的原始路径
+        String aacFilePath = "aac文件的路径";
+        //解析完aac保存的pcm文件
+        File mAACFile = new File(Environment.getExternalStorageDirectory(), "audio_test.pcm");
+        if (mAACFile.exists()) {
+            try {
+                outputStream = new BufferedOutputStream(new FileOutputStream(mAACFile));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            r = true;
+        } else {
+            Log.e(TAG, "aac文件无法创建");
+            return r;
+        }
+        String AUDIO_MIME = "audio/map4-latm";
+        //实例化MediaCodec
+        try {
+            mAudioDecode = MediaCodec.createDecoderByType(AUDIO_MIME);
+            MediaFormat mDecodeFormat = createFormat(aacFilePath);
+            // 配置好mAudioDecode
+            mAudioDecode.configure(mDecodeFormat, null, null, 0);
+            //前面两步将空闲状态需要配置的东西配置完成后，MediaCodec转换成Ｒunnable状态
+            mAudioDecode.start();
+            //获取输入输出的缓冲队列
+            ByteBuffer[] mAudioInputBuffers = mAudioCodec.getInputBuffers();
+            ByteBuffer[] mAudioOutBuffers = mAudioCodec.getOutputBuffers();
+            MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
+            mAudioInputBuffers = mAudioDecode.getInputBuffers();
+            mAudioOutBuffers = mAudioCodec.getOutputBuffers();
+            //初始化完成
+
+            //开始解码
+            boolean whileInterupt = false;
+            //循环去读取音频的帧数据
+            while (!whileInterupt) {
+                //获取输入缓冲buffer index
+                int inputBufferIndex = mAudioDecode.dequeueInputBuffer(5000);
+                if (inputBufferIndex > 0) {
+                    ByteBuffer inputBuffer = mAudioInputBuffers[inputBufferIndex];
+                    //从MediaExtractor中去读取音频帧数据,并返回读取到的数据大小
+                    int s =  mAudioExtractor.readSampleData(inputBuffer, 0);
+
+                }
+
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        return r;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    public MediaFormat createFormat(String aacFilePath) {
+        MediaFormat m = null;
+        mAudioExtractor = new MediaExtractor();
+        try {
+            mAudioExtractor.setDataSource(aacFilePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        for (int i = 0; i < mAudioExtractor.getTrackCount(); i++) {
+            m = mAudioExtractor.getTrackFormat(i);
+            String mime = m.getString(MediaFormat.KEY_MIME);
+            if (mime.contains("audio/")) {
+                mAudioExtractor.selectTrack(i);
+                break;
+            }
+        }
+        return m;
+    }
+
 
     public void addADTStoPacket(byte[] packet, int packetLen) {
         int profile = 2; // AAC LC
