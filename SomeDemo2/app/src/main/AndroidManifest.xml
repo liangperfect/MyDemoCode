@@ -35,15 +35,16 @@
             </intent-filter>
         </activity>
         <activity android:name=".util.PermissionsActivity" />
-        <activity android:name=".VideoActivity"></activity>
-        <activity android:name=".mediamodule.Media2Activity"></activity>
-        <activity android:name=".MediaTask.MediaTaskOneActivity"></activity>
-        <activity android:name=".mediamodule.Task2Activity"></activity>
-        <activity android:name=".mediamodule.Task3Activity"></activity>
-        <activity android:name=".mediamodule.Task4Activity"></activity>
-        <activity android:name=".mediamodule.Task5Activity"></activity>
-        <activity android:name=".mediamodule.Task6Activity"></activity>
-        <activity android:name=".mediamodule.Task7Activity"></activity>
+        <activity android:name=".VideoActivity" />
+        <activity android:name=".mediamodule.Media2Activity" />
+        <activity android:name=".MediaTask.MediaTaskOneActivity" />
+        <activity android:name=".mediamodule.Task2Activity" />
+        <activity android:name=".mediamodule.Task3Activity" />
+        <activity android:name=".mediamodule.Task4Activity" />
+        <activity android:name=".mediamodule.Task5Activity" />
+        <activity android:name=".mediamodule.Task6Activity" />
+        <activity android:name=".mediamodule.Task7Activity" />
+        <activity android:name=".cmakejnidemo.CmakeJniTestActivity"></activity>
     </application>
 
 </manifest>

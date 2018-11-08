@@ -10,22 +10,17 @@ import android.graphics.YuvImage;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Build;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.admin.somedemo.MediaTask.MediaTaskOneActivity;
-import com.example.admin.somedemo.mediamodule.Media2Activity;
-import com.example.admin.somedemo.mediamodule.Task2Activity;
-import com.example.admin.somedemo.mediamodule.Task3Activity;
-import com.example.admin.somedemo.mediamodule.Task4Activity;
-import com.example.admin.somedemo.mediamodule.Task5Activity;
+import com.example.admin.somedemo.cmakejnidemo.CmakeJniTestActivity;
 import com.example.admin.somedemo.mediamodule.Task6Activity;
 import com.example.admin.somedemo.util.CameraSettings;
 import com.example.admin.somedemo.util.CameraUtils;
@@ -45,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button btnSeek;
     private Button btnToVideo;
     private Button btnYuv2Jpeg;
+    private Button btnAssimpCmake;
 
     private MediaPlayer mMediaPlayer;
 
@@ -52,11 +48,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (checkPermissions() || !mHasCriticalPermissions) {
-            Log.v(TAG, "onCreate: Missing critical permissions.");
-            finish();
-            return;
-        }
+//        if (checkPermissions() || !mHasCriticalPermissions) {
+//            Log.v(TAG, "onCreate: Missing critical permissions.");
+//            finish();
+//            return;
+//        }
         setContentView(R.layout.activity_main);
         initView();
         initData();
@@ -69,12 +65,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnSeek = findViewById(R.id.btn_seek);
         btnToVideo = findViewById(R.id.btn_to_video);
         btnYuv2Jpeg = findViewById(R.id.btn_yuv2jpg);
+        btnAssimpCmake = findViewById(R.id.btn_assimpcmake);
         btnStart.setOnClickListener(this);
         btnPause.setOnClickListener(this);
         btnGoOn.setOnClickListener(this);
         btnSeek.setOnClickListener(this);
         btnToVideo.setOnClickListener(this);
         btnYuv2Jpeg.setOnClickListener(this);
+        btnAssimpCmake.setOnClickListener(this);
         mEditText = findViewById(R.id.ed_file_path);
     }
 
@@ -174,6 +172,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 byte[] dataJepg = stream.toByteArray();
                 CameraUtils.dumpYUVImage(dataJepg, "jpeg");
 
+                break;
+            case R.id.btn_assimpcmake:
+                startActivity(new Intent(MainActivity.this, CmakeJniTestActivity.class));
                 break;
             default:
                 break;

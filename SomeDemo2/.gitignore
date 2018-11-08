@@ -3,7 +3,17 @@
 /local.properties
 /.idea/workspace.xml
 /.idea/libraries
+/.idea/caches/
+/.idea/modules.xml
+/.idea/codeStyles/Project.xml
+/.idea/markdown-navigator/profiles_settings.xml
+/.idea/misc.xml
+/.idea/codeStyles/Project.xml
+/.idea/markdown-navigator/profiles_settings.xml
+/.idea/misc.xml
+
 .DS_Store
 /build
 /captures
 .externalNativeBuild
+

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -16,39 +15,37 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/btn_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="start"/>
+        android:text="start" />
 
     <Button
         android:id="@+id/btn_restart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="go on"/>
+        android:text="go on" />
 
     <Button
         android:id="@+id/btn_pause"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="pause"/>
+        android:text="pause" />
 
     <Button
         android:id="@+id/btn_seek"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="seek to"
-        />
+        android:text="seek to" />
 
     <Button
         android:id="@+id/btn_to_video"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="To Play Video"
-        />
+        android:text="To Play Video" />
 
     <Button
         android:id="@+id/btn_yuv2jpg"
@@ -57,5 +54,11 @@
         android:text="yuv2jpeg"
 
         />
+
+    <Button
+        android:id="@+id/btn_assimpcmake"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="cmake test" />
 
 </LinearLayout>
