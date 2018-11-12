@@ -3,4 +3,16 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <color name="transparent">#00ffffff</color>
+
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    
+    <color name="color_gray">#e5e5e5</color>
+    <color name="color_gray_dark">#777D7D7D</color>
+    <color name="color_blue">#A9A9F6</color>
+    <color name="color_blue_dark">#364CB3</color>
+    <color name="color_line">#CCCCCC</color>
+
 </resources>

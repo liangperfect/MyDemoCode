@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    tools:context=".advertisedemo.AdvertiseActivity">
+
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1.0">
+
+        <VideoView
+            android:id="@+id/vv_ad"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical" />
+
+        <Button
+            android:id="@+id/btn_pic0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="没有图片广告" />
+
+        <Button
+            android:id="@+id/btn_pic1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:text="一张图片广告" />
+
+        <Button
+            android:id="@+id/btn_pic2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:text="两张图片广告" />
+
+        <Button
+            android:id="@+id/btn_pic3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="三张图片广告" />
+
+    </FrameLayout>
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycleview_pictures"
+        android:layout_width="120dp"
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimary">
+
+    </android.support.v7.widget.RecyclerView>
+
+
+</LinearLayout>

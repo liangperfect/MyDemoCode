@@ -61,4 +61,10 @@
         android:layout_height="wrap_content"
         android:text="cmake test" />
 
+    <Button
+        android:id="@+id/btn_addplayer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="add play" />
+
 </LinearLayout>

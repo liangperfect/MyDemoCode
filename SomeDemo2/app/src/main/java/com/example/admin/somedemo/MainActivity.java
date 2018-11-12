@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.admin.somedemo.advertisedemo.AdvertiseActivity;
 import com.example.admin.somedemo.cmakejnidemo.CmakeJniTestActivity;
 import com.example.admin.somedemo.mediamodule.Task6Activity;
 import com.example.admin.somedemo.util.CameraSettings;
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button btnToVideo;
     private Button btnYuv2Jpeg;
     private Button btnAssimpCmake;
+    private Button btnAdPlayer;
 
     private MediaPlayer mMediaPlayer;
 
@@ -66,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnToVideo = findViewById(R.id.btn_to_video);
         btnYuv2Jpeg = findViewById(R.id.btn_yuv2jpg);
         btnAssimpCmake = findViewById(R.id.btn_assimpcmake);
+        btnAdPlayer = findViewById(R.id.btn_addplayer);
         btnStart.setOnClickListener(this);
         btnPause.setOnClickListener(this);
         btnGoOn.setOnClickListener(this);
@@ -73,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnToVideo.setOnClickListener(this);
         btnYuv2Jpeg.setOnClickListener(this);
         btnAssimpCmake.setOnClickListener(this);
+        btnAdPlayer.setOnClickListener(this);
         mEditText = findViewById(R.id.ed_file_path);
     }
 
@@ -175,6 +179,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.btn_assimpcmake:
                 startActivity(new Intent(MainActivity.this, CmakeJniTestActivity.class));
+                break;
+            case R.id.btn_addplayer:
+                startActivity(new Intent(MainActivity.this, AdvertiseActivity.class));
                 break;
             default:
                 break;
