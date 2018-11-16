@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">SomeDemo</string>
+    <string name="databing_name">DataBinding</string>
 </resources>

@@ -7,64 +7,83 @@
     android:orientation="vertical"
     tools:context="com.example.admin.somedemo.MainActivity">
 
-    <EditText
-        android:id="@+id/ed_file_path"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/btn_start"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="start" />
-
-    <Button
-        android:id="@+id/btn_restart"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="go on" />
-
-    <Button
-        android:id="@+id/btn_pause"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="pause" />
-
-    <Button
-        android:id="@+id/btn_seek"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="seek to" />
-
-    <Button
-        android:id="@+id/btn_to_video"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="To Play Video" />
-
-    <Button
-        android:id="@+id/btn_yuv2jpg"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="yuv2jpeg"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical">
 
-        />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-    <Button
-        android:id="@+id/btn_assimpcmake"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="cmake test" />
+            <EditText
+                android:id="@+id/ed_file_path"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hello World!"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/btn_addplayer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="add play" />
+            <Button
+                android:id="@+id/btn_start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="start" />
+
+            <Button
+                android:id="@+id/btn_restart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="go on" />
+
+            <Button
+                android:id="@+id/btn_pause"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="pause" />
+
+            <Button
+                android:id="@+id/btn_seek"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="seek to" />
+
+            <Button
+                android:id="@+id/btn_to_video"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="To Play Video" />
+
+            <Button
+                android:id="@+id/btn_yuv2jpg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="yuv2jpeg"
+
+                />
+
+            <Button
+                android:id="@+id/btn_assimpcmake"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="cmake test" />
+
+            <Button
+                android:id="@+id/btn_addplayer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="add play" />
+
+            <Button
+                android:id="@+id/btn_databing"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="databing test" />
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

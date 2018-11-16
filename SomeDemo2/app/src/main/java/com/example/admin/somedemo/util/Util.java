@@ -16,7 +16,7 @@ public class Util {
     public static Uri getImageStreamFromExternal(String imageName) {
         File externalPubPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         File picPath = new File(externalPubPath, imageName);
-        Log.d("chenliang", "getImageStreamFromExternal picPath" + picPath.getAbsolutePath());
+//        Log.d("chenliang", "getImageStreamFromExternal picPath" + picPath.getAbsolutePath());
         Uri uri = null;
         if (picPath.exists()) {
             uri = Uri.fromFile(picPath);

@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.example.admin.somedemo.advertisedemo.AdvertiseActivity;
 import com.example.admin.somedemo.cmakejnidemo.CmakeJniTestActivity;
+import com.example.admin.somedemo.databingdemo.DataBindingActivity;
 import com.example.admin.somedemo.mediamodule.Task6Activity;
 import com.example.admin.somedemo.util.CameraSettings;
 import com.example.admin.somedemo.util.CameraUtils;
@@ -43,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button btnYuv2Jpeg;
     private Button btnAssimpCmake;
     private Button btnAdPlayer;
+    private Button btnDataBing;
 
     private MediaPlayer mMediaPlayer;
 
@@ -69,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnYuv2Jpeg = findViewById(R.id.btn_yuv2jpg);
         btnAssimpCmake = findViewById(R.id.btn_assimpcmake);
         btnAdPlayer = findViewById(R.id.btn_addplayer);
+        btnDataBing = findViewById(R.id.btn_databing);
         btnStart.setOnClickListener(this);
         btnPause.setOnClickListener(this);
         btnGoOn.setOnClickListener(this);
@@ -77,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnYuv2Jpeg.setOnClickListener(this);
         btnAssimpCmake.setOnClickListener(this);
         btnAdPlayer.setOnClickListener(this);
+        btnDataBing.setOnClickListener(this);
         mEditText = findViewById(R.id.ed_file_path);
     }
 
@@ -182,6 +186,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.btn_addplayer:
                 startActivity(new Intent(MainActivity.this, AdvertiseActivity.class));
+                break;
+            case R.id.btn_databing:
+                startActivity(new Intent(MainActivity.this, DataBindingActivity.class));
                 break;
             default:
                 break;

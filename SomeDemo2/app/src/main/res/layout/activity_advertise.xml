@@ -12,6 +12,7 @@
         android:layout_height="match_parent"
         android:layout_weight="1.0">
 
+
         <VideoView
             android:id="@+id/vv_ad"
             android:layout_width="match_parent"
@@ -45,16 +46,47 @@
             android:layout_gravity="center_horizontal"
             android:text="三张图片广告" />
 
-    </FrameLayout>
+        <RelativeLayout
+            android:layout_width="60dp"
+            android:layout_height="160dp"
+            android:layout_gravity="center">
 
+
+            <!--<com.example.admin.somedemo.advertisedemo.customview.MyRotateLoading-->
+            <!--android:id="@+id/rotateloading_advertise"-->
+            <!--android:layout_width="50dp"-->
+            <!--android:layout_height="50dp"-->
+            <!--android:layout_centerInParent="true"-->
+            <!--android:layout_centerHorizontal="true" />-->
+
+
+            <TextView
+                android:id="@+id/tv_download_indictor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/rotateloading_advertise"
+                android:layout_centerHorizontal="true"
+                android:text="下载进度"
+                android:textColor="@color/white"
+                android:textSize="@dimen/download_indictor_width"
+                android:visibility="gone" />
+
+            <com.victor.loading.rotate.RotateLoading
+                android:id="@+id/rotateloading_advertise"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_centerInParent="true"
+                app:loading_color="#ffffff"
+                app:loading_width="3dp" />
+
+        </RelativeLayout>
+    </FrameLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycleview_pictures"
         android:layout_width="120dp"
         android:layout_height="match_parent"
-        android:background="@color/colorPrimary">
-
-    </android.support.v7.widget.RecyclerView>
-
+        android:background="@color/colorPrimary"
+        android:visibility="gone" />
 
 </LinearLayout>
