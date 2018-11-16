@@ -46,8 +46,12 @@
         <activity android:name=".mediamodule.Task6Activity" />
         <activity android:name=".mediamodule.Task7Activity" />
         <activity android:name=".cmakejnidemo.CmakeJniTestActivity" />
-        <activity android:name=".advertisedemo.AdvertiseActivity" />
-        <activity android:name=".databingdemo.DataBindingActivity"></activity>
+        <activity
+            android:name=".advertisedemo.AdvertiseActivity"
+            android:configChanges="orientation|screenSize"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity android:name=".databingdemo.DataBindingActivity" />
+        <activity android:name=".testdemo.TestActivity"></activity>
     </application>
 
 </manifest>

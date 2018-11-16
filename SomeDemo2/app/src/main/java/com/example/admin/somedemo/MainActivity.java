@@ -24,6 +24,7 @@ import com.example.admin.somedemo.advertisedemo.AdvertiseActivity;
 import com.example.admin.somedemo.cmakejnidemo.CmakeJniTestActivity;
 import com.example.admin.somedemo.databingdemo.DataBindingActivity;
 import com.example.admin.somedemo.mediamodule.Task6Activity;
+import com.example.admin.somedemo.testdemo.TestActivity;
 import com.example.admin.somedemo.util.CameraSettings;
 import com.example.admin.somedemo.util.CameraUtils;
 import com.example.admin.somedemo.util.PermissionsActivity;
@@ -188,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(new Intent(MainActivity.this, AdvertiseActivity.class));
                 break;
             case R.id.btn_databing:
-                startActivity(new Intent(MainActivity.this, DataBindingActivity.class));
+                startActivity(new Intent(MainActivity.this, TestActivity.class));
                 break;
             default:
                 break;

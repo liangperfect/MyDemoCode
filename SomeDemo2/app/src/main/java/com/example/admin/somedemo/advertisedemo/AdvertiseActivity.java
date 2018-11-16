@@ -2,11 +2,14 @@ package com.example.admin.somedemo.advertisedemo;
 
 import android.annotation.SuppressLint;
 import android.content.pm.ActivityInfo;
+import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,6 +22,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.example.admin.somedemo.R;
@@ -49,13 +53,16 @@ public class AdvertiseActivity extends AppCompatActivity implements View.OnClick
     private final int DOWNLOAD_PROGRESS = 2;
     private final int DOWNLOAD_FAIL = 3;
     private final int DOWNLOAD_SUCCESS = 4;
+    private List<String> videoPathList;
+    private int mCurrentVideoIndex = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        //先不横屏，有问题
+//        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
@@ -84,30 +91,36 @@ public class AdvertiseActivity extends AppCompatActivity implements View.OnClick
     private void initVideoData() {
         currentVideoPath = "/sdcard/ad1.mp4";
         mHandler = new MyHandler();
+        videoPathList = new ArrayList<>();
         //请求网络数据
         mAdvertiseNet = AdvertiseNet.getInstance(AdvertiseActivity.this, new AdvertiseNet.DownLoadVideoListener() {
             @Override
             public void onStart() {
-                Log.d("chenliang", "onStart onStart onStart");
-                mHandler.sendEmptyMessage(DOWNLOAD_START);
-            }
-
-            @Override
-            public void onProgress(int degree) {
-//                Log.d("chenliang", "download progress:" + degree + "%");
                 Message msg = mHandler.obtainMessage();
-                msg.arg1 = DOWNLOAD_PROGRESS;
-                msg.arg2 = degree;
+                msg.what = DOWNLOAD_START;
                 mHandler.sendMessage(msg);
             }
 
             @Override
-            public void onSuccess(String videoPath) {
+            public void onProgress(int degree) {
+                Message msg = mHandler.obtainMessage();
+                msg.what = DOWNLOAD_PROGRESS;
+                msg.arg2 = degree;
+                Log.d("chenliang", "onprogress is " + degree);
+                mHandler.sendMessage(msg);
+            }
 
-                Log.d("chenliang", "onSuccess videoPath:" + videoPath);
+            @Override
+            public void onSuccess(String videoPath, int videoSum) {
                 //开始播放广告
-//                mHandler.sendEmptyMessageDelayed(1, 5000);
-                mHandler.sendEmptyMessage(DOWNLOAD_SUCCESS);
+                synchronized (videoPathList) {
+                    videoPathList.add(videoPath);
+//                currentVideoPath = videoPath;
+                    if (videoSum == videoPathList.size()) {
+                        mHandler.sendEmptyMessage(DOWNLOAD_SUCCESS);
+                    }
+                }
+
             }
 
             @Override
@@ -131,40 +144,30 @@ public class AdvertiseActivity extends AppCompatActivity implements View.OnClick
             super.handleMessage(msg);
             switch (msg.what) {
                 case DOWNLOAD_START:
-                    Log.d("chenliang", " DOWNLOAD_START ");
-                    if (!mRotateLoading.isStart()) {
-                        Log.d("chenliang", " DOWNLOAD_START   start  ");
-                        mRotateLoading.start();
-                        mTvDownLoadIndctor.setVisibility(View.VISIBLE);
-                        mTvDownLoadIndctor.setText("0%");
-                    }
+                    Toast.makeText(AdvertiseActivity.this, "开始更新广告数据", Toast.LENGTH_SHORT).show();
+                    mRotateLoading.start();
+                    mTvDownLoadIndctor.setVisibility(View.VISIBLE);
+                    mTvDownLoadIndctor.setText("1%");
                     break;
                 case DOWNLOAD_PROGRESS:
-                    Log.d("chenliang", "DOWNLOAD_PROGRESS");
                     mTvDownLoadIndctor.setText(msg.arg2 + "%");
                     break;
                 case DOWNLOAD_FAIL:
                     //弹出错误信息给用户
-                    Log.d("chenliang", "DOWNLOAD_FAIL");
+                    Log.e("chenliang", "DOWNLOAD_FAIL");
                     mRotateLoading.stop();
                     break;
                 case DOWNLOAD_SUCCESS:
-                    Log.d("chenliang", "DOWNLOAD_SUCCESS");
-                    if (!mVideoView.isPlaying()) {
-                        mRotateLoading.stop();
-                        mTvDownLoadIndctor.setText(0 + "%");
-                        mTvDownLoadIndctor.setVisibility(View.GONE);
-                    }
-                    if (current_video_index == VIDEO_INDEX_ONE) {
-                        currentVideoPath = "/sdcard/ad2.mp4";
-                        current_video_index = VIDEO_INDEX_TWO;
-                    } else {
-                        currentVideoPath = "/sdcard/ad1.mp4";
-                        current_video_index = VIDEO_INDEX_ONE;
-                    }
-                    mVideoView.setVideoPath(currentVideoPath);
+                    Log.d("chenliang", "DOWNLOAD_SUCCESS videoPathSize :" + videoPathList.size());
+                    mCurrentVideoIndex = mCurrentVideoIndex % (videoPathList.size());
+
+                    Log.d("chenliang", "play mCurrentVideoIndex:" + mCurrentVideoIndex);
+                    mRotateLoading.stop();
+                    mTvDownLoadIndctor.setVisibility(View.GONE);
+                    mVideoView.setVideoPath(videoPathList.get(mCurrentVideoIndex));
                     mVideoView.start();
-//                    mHandler.sendEmptyMessageDelayed(DOWNLOAD_SUCCESS, 10000);
+                    mCurrentVideoIndex++;
+                    mHandler.sendEmptyMessageDelayed(DOWNLOAD_SUCCESS, 10000);
                     break;
                 default:
                     break;
@@ -235,7 +238,7 @@ public class AdvertiseActivity extends AppCompatActivity implements View.OnClick
 //                mRotateLoading.start();
                 //开始播放视频
                 Log.d("chenliang", " onClick pic0000000000000 ");
-                mHandler.sendEmptyMessage(DOWNLOAD_START);
+//                mHandler.sendEmptyMessage(DOWNLOAD_START);
                 break;
             case R.id.btn_pic1:
                 new Thread(new Runnable() {

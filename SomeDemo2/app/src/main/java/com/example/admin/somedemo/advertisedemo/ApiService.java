@@ -6,6 +6,7 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.Streaming;
 
@@ -23,6 +24,6 @@ public interface ApiService {
 
     //下载视频
     @Streaming
-    @GET("c7b2c12fc94937f4828a199397c6f3a0.mp4")
-    Call<ResponseBody> getAdvertiseSources();
+    @GET("/{videoMd5}")
+    Call<ResponseBody> getAdvertiseSources(@Path("videoMd5") String videMd5);
 }

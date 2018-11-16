@@ -1,6 +1,7 @@
 package com.example.admin.somedemo.advertisedemo;
 
 import android.content.Context;
+import android.os.Looper;
 import android.util.Log;
 
 import com.example.admin.somedemo.advertisedemo.model.AdvertiseData;
@@ -34,6 +35,7 @@ public class AdvertiseNet {
     private Context mContext;
     private DownLoadVideoListener mDownLoadVideoListener;
     private static AdvertiseNet sAdvertiseNet;
+    private int mVideoDataNumbers = 0;
 
     public static AdvertiseNet getInstance(Context context, DownLoadVideoListener downLoadVideoListener) {
         synchronized (AdvertiseNet.class) {
@@ -57,12 +59,12 @@ public class AdvertiseNet {
      *下载广告
      */
     public void downLoadAdvertise() {
+        mDownLoadVideoListener.onStart();
         //获取下载请求参数
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(ADVERTISE_INFO_BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-        Log.d("chenliang", "base url ->" + retrofit.baseUrl().url().getPath());
         ApiService apiService = retrofit.create(ApiService.class);
         Call<AdvertiseData> advertiseDataCall = apiService.getAdvertiseData(screen_id);
         advertiseDataCall.enqueue(new Callback<AdvertiseData>() {
@@ -74,13 +76,8 @@ public class AdvertiseNet {
                 List<DataList> dataList = data.getData_list();
                 // TODO: 2018/11/15 视频列表对比后续添加,判断是否需要下载视频
 
-//                for (DataList item : dataList) {
-//                    String videoMd5 = item.getMd5();
-//                    //开始下mp4
-//                    downLoadAdvertisMp4(videoMd5);
-//                }
+                mVideoDataNumbers = dataList.size();
                 for (int i = 0; i < dataList.size(); i++) {
-                    //都是异步下载，那依最大文件下载为进度
                     downLoadAdvertisMp4(dataList.get(i).getMd5());
                 }
             }
@@ -99,19 +96,18 @@ public class AdvertiseNet {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         ApiService apiService = retrofit.create(ApiService.class);
-        Call<ResponseBody> videoCall = apiService.getAdvertiseSources();
-        mDownLoadVideoListener.onStart();
+        Call<ResponseBody> videoCall = apiService.getAdvertiseSources(videoMd5);
+
         videoCall.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, final Response<ResponseBody> response) {
                 Log.d("chenliang",
                         "contentLengeth():" + response.body().contentLength() +
-                                "  contentType():" + response.body().contentType());
+                                "  contentType():" + response.body().contentType() + " reponse:" + response.toString());
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
                         writeResponseBodyToDisk(mContext, response.body(), videoMd5);
-
                     }
                 }).start();
             }
@@ -128,7 +124,7 @@ public class AdvertiseNet {
         try {
             File videoFile = new File(context.getExternalFilesDir(null) + File.separator + fileName);
             if (videoFile.exists()) {
-                mDownLoadVideoListener.onSuccess(videoFile.getPath());
+                mDownLoadVideoListener.onSuccess(videoFile.getPath(), mVideoDataNumbers);
                 return true;
             }
             InputStream inputStream = null;
@@ -150,7 +146,7 @@ public class AdvertiseNet {
                     mDownLoadVideoListener.onProgress((int) (100 * fileSizeDownloaded / fileTotalSize));
                 }
                 //当前文件下载完毕
-                mDownLoadVideoListener.onSuccess(videoFile.getPath());
+                mDownLoadVideoListener.onSuccess(videoFile.getPath(), mVideoDataNumbers);
                 outputStream.flush();
                 return true;
             } catch (IOException e) {
@@ -174,7 +170,12 @@ public class AdvertiseNet {
 
         public void onProgress(int degree);
 
-        public void onSuccess(String videoPath);
+
+        /**
+         * @param videoPath video保存的地址
+         * @param videoSum  需要保存的视频总数，也是用来判断视频是否下完的标志
+         */
+        public void onSuccess(String videoPath, int videoSum);
 
         public void onFaiure(String errorMsg);
     }
