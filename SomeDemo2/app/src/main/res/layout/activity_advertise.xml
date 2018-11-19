@@ -12,7 +12,6 @@
         android:layout_height="match_parent"
         android:layout_weight="1.0">
 
-
         <VideoView
             android:id="@+id/vv_ad"
             android:layout_width="match_parent"
@@ -20,45 +19,36 @@
             android:layout_gravity="center_vertical" />
 
         <Button
-            android:id="@+id/btn_pic0"
+            android:id="@+id/btn_customer_advertiser"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="没有图片广告" />
+            android:text="客户广告" />
 
         <Button
-            android:id="@+id/btn_pic1"
+            android:id="@+id/btn_public_service_advertiser"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
-            android:text="一张图片广告" />
+            android:text="公益广告" />
 
         <Button
-            android:id="@+id/btn_pic2"
+            android:id="@+id/btn_promotation_advertise"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:text="两张图片广告" />
+            android:text="促销广告" />
 
         <Button
-            android:id="@+id/btn_pic3"
+            android:id="@+id/btn_switch_pics"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="三张图片广告" />
+            android:layout_gravity="bottom|center_horizontal"
+            android:text="促销广告图片切换" />
 
         <RelativeLayout
             android:layout_width="60dp"
             android:layout_height="160dp"
             android:layout_gravity="center">
-
-
-            <!--<com.example.admin.somedemo.advertisedemo.customview.MyRotateLoading-->
-            <!--android:id="@+id/rotateloading_advertise"-->
-            <!--android:layout_width="50dp"-->
-            <!--android:layout_height="50dp"-->
-            <!--android:layout_centerInParent="true"-->
-            <!--android:layout_centerHorizontal="true" />-->
-
 
             <TextView
                 android:id="@+id/tv_download_indictor"
@@ -81,12 +71,37 @@
 
         </RelativeLayout>
     </FrameLayout>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycleview_pictures"
-        android:layout_width="120dp"
+    <LinearLayout
+        android:id="@+id/ll_pic_contents"
+        android:layout_width="150dp"
         android:layout_height="match_parent"
-        android:background="@color/colorPrimary"
-        android:visibility="gone" />
+        android:background="@color/color_gray"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/img_pic1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1.0"
+            android:scaleType="fitXY"
+            android:src="@drawable/bg_1" />
+
+        <ImageView
+            android:id="@+id/img_pic2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1.0"
+            android:scaleType="fitXY"
+            android:src="@drawable/bg_2" />
+
+        <ImageView
+            android:id="@+id/img_pic3"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1.0"
+            android:scaleType="fitXY"
+            android:src="@drawable/bg_3" />
+    </LinearLayout>
 
 </LinearLayout>

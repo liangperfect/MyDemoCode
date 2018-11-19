@@ -84,7 +84,6 @@ public class AdvertiseNet {
 
             @Override
             public void onFailure(Call<AdvertiseData> call, Throwable t) {
-//                Log.d("chenliang", "数据返回失败原因:" + t.getMessage());
                 mDownLoadVideoListener.onFaiure("Obtain Video Info " + t.getMessage());
             }
         });
